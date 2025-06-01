@@ -54,3 +54,38 @@ Check specific connector status
 ```bash
 curl -X GET http://localhost:8083/connectors/{connector-name}/status
 ```
+
+### 3. Run Python program
+```bash
+python src/transform/concat_name.py
+```
+
+## Demo
+
+Kafka UI displays changes in the source database
+
+![kafka-ui.png](assets/kafka-ui.png)
+
+### Insert a new user
+
+In PostgreSQL, execute the following query to insert a new user into the `vdt` schema:
+```sql
+INSERT INTO vdt.users(first_name, last_name, email)
+VALUES ('Duyen', 'Ha', 'duyssde6111@gmail.com');
+```
+
+A new message with operation = 'c' (create) is created in Kafka:
+
+![demo-insert.png](assets/demo-insert.png)
+
+### Update First Name to 'Trang'
+```sql
+UPDATE vdt.users
+SET first_name ='Trang'
+WHERE id = 19;
+```
+A new message with operation = 'u' (update) is created in Kafka:
+![demo-update.png](assets/demo-update.png)
+
+### Output
+![output.png](assets/output.png)
