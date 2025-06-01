@@ -57,6 +57,9 @@ curl -X GET http://localhost:8083/connectors/{connector-name}/status
 
 ### 3. Run Python program
 ```bash
+pip install -r requirements.txt
+```
+```bash
 python src/transform/concat_name.py
 ```
 
