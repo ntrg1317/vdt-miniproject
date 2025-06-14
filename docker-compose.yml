@@ -28,12 +28,12 @@ services:
     image: debezium/postgres:17
     container_name: postgres-source
     environment:
-      POSTGRES_USER: debezium
-      POSTGRES_PASSWORD: debezium
-      POSTGRES_DB: debezium
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     volumes:
-      - ./config:/postgres/config
-      - ./config/postgresql/init-source.sql:/docker-entrypoint-initdb.d/init-source.sql
+      - ./config/postgresql:/postgres/config
+      - ./postgres/init:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
 

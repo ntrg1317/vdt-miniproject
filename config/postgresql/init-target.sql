@@ -1,5 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS vdt_rep;
-
 CREATE TABLE vdt_rep.users (
     id SERIAL PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
