@@ -6,12 +6,17 @@ load_dotenv()
 
 class Settings:
     # Database settings
-    DATABASE_URL = os.getenv("DATABASE_URL")
-    DB_HOST = os.getenv("DB_HOST", "localhost")
-    DB_PORT = int(os.getenv("DB_PORT", 5432))
-    DB_NAME = os.getenv("DB_NAME", "analytics_db")
-    DB_USER = os.getenv("DB_USER")
-    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DBS_HOST = os.getenv("POSTGRES_SOURCE_HOST", "localhost")
+    DBS_PORT = int(os.getenv("POSTGRES_SOURCE_PORT", 5432))
+    DBS_NAME = os.getenv("POSTGRES_SOURCE_DB", "postgres")
+    DBS_USER = os.getenv("POSTGRES_SOURCE_USER", "postgres")
+    DBS_PASSWORD = os.getenv("POSTGRES_SOURCE_PASSWORD", "postgres")
+
+    DBT_HOST = os.getenv("POSTGRES_TARGET_HOST", "localhost")
+    DBT_PORT = int(os.getenv("POSTGRES_TARGET_PORT", 5432))
+    DBT_NAME = os.getenv("POSTGRES_TARGET_DB", "debezium")
+    DBT_USER = os.getenv("POSTGRES_TARGET_USER", "debezium")
+    DBT_PASSWORD = os.getenv("POSTGRES_TARGET_PASSWORD", "debezium")
 
     # API settings
     # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -24,11 +29,18 @@ class Settings:
     # Chart storage
     CHART_STORAGE_PATH = "storage/charts/"
 
+    #Dash ID
+    CHI_TIEU_THANG = 7753
+    CHI_TIEU_THANG_PHONG_BAN = 7759
+    THANG = 4702
+
     @property
     def database_url(self):
-        if self.DATABASE_URL:
-            return self.DATABASE_URL
-        return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return f"postgresql://{self.DBS_USER}:{self.DBS_PASSWORD}@{self.DBS_HOST}:{self.DBS_PORT}/{self.DBS_NAME}"
+
+    @property
+    def target_database_url(self):
+        return f"postgresql://{self.DBT_USER}:{self.DBT_PASSWORD}@{self.DBT_HOST}:{self.DBT_PORT}/{self.DBT_NAME}"
 
 
 settings = Settings()

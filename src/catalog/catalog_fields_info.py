@@ -128,7 +128,7 @@ def get_field_metadata(database: str, table_oid: int, sample_data: List[Tuple]) 
         return fields
 
     except Exception as e:
-        self.logger.warn("Cannot fetch field metadata: %s", e)
+        logger.warning("Cannot fetch field metadata: %s", e)
         return []
     finally:
         conn.close()

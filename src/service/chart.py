@@ -5,14 +5,13 @@ from sqlalchemy import create_engine, MetaData, Table
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
-from sqlalchemy.testing.suite.test_reflection import metadata
 
 from config.settings import settings
 
 
 class ChartService:
-    def __init__(self):
-        self.engine = create_engine(settings.DATABASE_URL)
+    def __init__(self, engine):
+        self.engine = engine
 
     def create_chart(self, data: pd.DataFrame, chart_type: str, title: str,
                      config: Optional[Dict[str, Any]] = None,
@@ -51,11 +50,13 @@ class ChartService:
     def create_bar_chart(self, data: pd.DataFrame, title: str, config: Dict[str, Any]) -> go.Figure:
         x_col = config.get('x_column', data.columns[0])
         y_col = config.get('y_column', data.columns[1] if len(data.columns) > 1 else data.columns[0])
+        x_title = config.get('x_title', x_col)
+        y_title = config.get('y_title', y_col)
 
         fig = px.bar(data, x=x_col, y=y_col, title=title)
         fig.update_layout(
-            xaxis_title=config.get('x_title', x_col),
-            yaxis_title=config.get('y_title', y_col),
+            xaxis_title=config.get('x_title', x_title),
+            yaxis_title=config.get('y_title', y_title),
             template='plotly_white'
         )
 
@@ -138,7 +139,7 @@ class ChartService:
     def save_chart(self, name: str, title: str, chart_type: str, json_data: str,
                      config: Dict[str, Any], filters: Optional[Dict[str, Any]] = None):
         metadata = MetaData()
-        charts = Table('charts', metadata, autoload_with=self.engine)
+        charts = Table('catalog.charts', metadata, autoload_with=self.engine)
 
         stmt = charts.insert().values(
             name=name,
