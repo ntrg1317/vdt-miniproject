@@ -39,6 +39,9 @@ class PostgresConn:
     def __del__(self):
         self.close()
 
+    def get_conn(self):
+        return self.conn
+
     def get_datasource(self):
         return self.datasource
 
@@ -70,10 +73,7 @@ class PostgresConn:
     def truncate(self, tablename):
         cursor = self.conn.cursor()
         try:
-            query = sql.SQL("TRUNCATE TABLE {} RESTART IDENTITY;").format(
-                sql.Identifier(tablename)
-            )
-            cursor.execute(query)
+            cursor.execute("TRUNCATE TABLE {} RESTART IDENTITY;".format(tablename))
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
@@ -101,4 +101,14 @@ class PostgresConn:
         except Exception as e:
             self.conn.rollback()
             print(f"[ERROR] Insert failed: {e}")
+            raise
+
+    def execute(self, query, params=None):
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(query, params)
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            print(f"[ERROR] Execute failed: {e}")
             raise

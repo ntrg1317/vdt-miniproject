@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class TableMetadata:
     """Metadata của bảng/view"""
+    id: str
     schema: str
     name: str
     rows: int
@@ -27,7 +28,8 @@ class TableMetadata:
     frequency: str = "1d"
 
 
-def describe_databases(conn: PostgresConn) -> List[str]:
+def describe_databases() -> List[str]:
+    conn = PostgresConn("source")
     try:
         sql_get_dbs = f"""
         SELECT datname FROM pg_database WHERE datistemplate = false;
@@ -44,61 +46,37 @@ def get_table_metadata(database: str) -> List[TableMetadata]:
     conn = PostgresConn("source", db=database)
     try:
         # Refresh system tables
-        conn.select("ANALYZE VERBOSE;")
+        conn.execute("ANALYZE VERBOSE;")
 
         get_table_metadata_query = f"""
         SELECT 
-            schemaname, 
-            tablename, 
-            CAST(reltuples AS int4) AS row,
-            ROUND(CAST(relpages/128.0 AS numeric), 2) AS size, 
-            CAST(d.description AS TEXT), 
-            c.oid, 
-            'table' AS objecttype
+            n.nspname AS schema,
+            c.relname AS name,
+            c.reltuples::int AS rows,
+            ROUND(pg_total_relation_size(c.oid)/1024.0/1024.0, 2) AS size,
+            d.description,
+            c.oid,
+            CASE c.relkind 
+                WHEN 'r' THEN 'table'
+                WHEN 'm' THEN 'matview'
+                WHEN 'v' THEN 'view'
+                ELSE c.relkind::text
+            END AS type
         FROM pg_class c
-        LEFT JOIN pg_namespace n ON c.relnamespace = n.oid
-        LEFT JOIN pg_tables t ON (n.nspname = t.schemaname AND c.relname = t.tablename)
+        JOIN pg_namespace n ON n.oid = c.relnamespace
         LEFT JOIN pg_description d ON d.objoid = c.oid AND d.objsubid = 0
-        WHERE c.relkind = 'r' 
-          AND schemaname NOT IN ('information_schema','pg_catalog')
-        
-        UNION
-        
-        SELECT 
-            v.schemaname, 
-            v.matviewname, 
-            0, 
-            0.0, 
-            v.definition, 
-            c.oid, 
-            'matview' AS object_type
-        FROM pg_class c
-        LEFT JOIN pg_namespace n ON c.relnamespace = n.oid
-        LEFT JOIN pg_matviews v ON (n.nspname = v.schemaname AND c.relname = v.matviewname)
-        WHERE schemaname NOT IN ('information_schema','pg_catalog')
-        
-        UNION
-        
-        SELECT 
-            v.schemaname, 
-            v.viewname, 
-            0, 
-            0.0, 
-            v.definition, 
-            c.oid, 
-            'view' AS object_type
-        FROM pg_class c
-        LEFT JOIN pg_namespace n ON c.relnamespace = n.oid
-        LEFT JOIN pg_views v ON (n.nspname = v.schemaname AND c.relname = v.viewname)
-        WHERE schemaname NOT IN ('information_schema','pg_catalog');
+        WHERE n.nspname NOT IN ('pg_catalog', 'information_schema')
+          AND c.relkind IN ('r', 'm', 'v')
         """
 
         result = conn.select(get_table_metadata_query)
-        logger.info(result)
 
         tables = []
         for row in result:
+            table_id = hashlib.md5(f"{database}.{row[0]}.{row[1]}".encode()).hexdigest()
+
             tables.append(TableMetadata(
+                id=table_id,
                 schema=row[0],
                 name=row[1],
                 rows=row[2] or 0,
@@ -128,26 +106,37 @@ def save_table_metadata(tables: List[TableMetadata], timestamp:str) -> None:
     conn = PostgresConn("target", db="debezium")
     datasource = conn.get_datasource()
     try:
-        conn.truncate("catalog.table_origin")
-        for table in tables:
-            values = []
+        values = []
 
-            table_id = hashlib.md5(f"{table.database}.{table.schema}.{table.name}".encode()).hexdigest()
+        for table in tables:
             values.append([
-                table_id, datasource, table.database, table.schema, table.name,
+                table.id, datasource, table.database, table.schema, table.name,
                 table.business_term, table.frequency, table.rows, table.size, table.type,
                 timestamp, False, False
             ])
 
         insert_sql = """
-                     INSERT INTO catalog.table_origin (id, datasource, database, schema, tablename,
-                                               business_term, frequency, rows, size, type,
-                                               update_time, skip, expire)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); \
-                     """
+            INSERT INTO catalog.table_origin (id, datasource, database, schema, tablename,
+                                      business_term, frequency, rows, size, type,
+                                      update_time, skip, expire)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (id) DO UPDATE SET
+                datasource = EXCLUDED.datasource,
+                database = EXCLUDED.database,
+                schema = EXCLUDED.schema,
+                tablename = EXCLUDED.tablename,
+                business_term = EXCLUDED.business_term,
+                frequency = EXCLUDED.frequency,
+                rows = EXCLUDED.rows,
+                size = EXCLUDED.size,
+                type = EXCLUDED.type,
+                update_time = EXCLUDED.update_time,
+                skip = EXCLUDED.skip,
+                expire = EXCLUDED.expire
+        """
 
         conn.batch_insert(insert_sql, values)
-        logger.info(f"Successfully save % rows to table metadata:", len(values))
+        logger.info(f"Successfully save %s rows to table metadata:", len(values))
 
 
     except Exception as e:
@@ -155,20 +144,13 @@ def save_table_metadata(tables: List[TableMetadata], timestamp:str) -> None:
     finally:
         conn.close()
 
-def collect_metadata():
+def collect_table_metadata():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.info(f"Collecting table metadata at {timestamp}")
 
     conn = PostgresConn("source", db="postgres")
     databases = describe_databases(conn)
     for database in databases:
+        logger.info(f"Processing database: {database[0]}")
         tables = get_table_metadata(database[0])
         save_table_metadata(tables, timestamp)
-
-    logger.info("Finished collecting table metadata")
-
-def main():
-    collect_metadata()
-
-if __name__ == "__main__":
-    main()

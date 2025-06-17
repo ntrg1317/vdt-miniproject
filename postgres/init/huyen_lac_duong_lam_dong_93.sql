@@ -48,671 +48,671 @@ ALTER TABLE public.bang_hong_test OWNER TO postgres;
 -- Name: bang_test_demo; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.bang_test_demo (
-    "Test_Don_Vi_Tinh" text,
-    "Test_ma_so" text,
-    "Test_prd_id" bigint
-);
-
-
-ALTER TABLE public.bang_test_demo OWNER TO postgres;
-
---
--- Name: bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 (
-    rp_input_grant_id bigint,
-    org_id bigint,
-    prd_id bigint,
-    time_type bigint,
-    datarow_id bigint,
-    row_id bigint,
-    parent_row_id double precision,
-    update_time timestamp without time zone,
-    update_user text,
-    idxpath text,
-    assign_org bigint,
-    hash_id text,
-    rn text,
-    ind_name text,
-    ind_code text,
-    ind_unit text,
-    tt4 double precision,
-    tt5 double precision
-);
-
-
-ALTER TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 OWNER TO postgres;
-
---
--- Name: bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 (
-    rp_input_grant_id bigint,
-    org_id bigint,
-    prd_id bigint,
-    time_type bigint,
-    datarow_id bigint,
-    row_id bigint,
-    parent_row_id text,
-    update_time timestamp without time zone,
-    update_user text,
-    idxpath text,
-    assign_org bigint,
-    hash_id text,
-    rn text,
-    ind_name text,
-    ind_code text,
-    ind_unit text,
-    tt1 double precision,
-    tt2 double precision
-);
-
-
-ALTER TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 OWNER TO postgres;
-
---
--- Name: bao_cao_thang_ktxh_huyen_lac_duong_4702; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.bao_cao_thang_ktxh_huyen_lac_duong_4702 (
-    rp_input_grant_id bigint,
-    org_id bigint,
-    prd_id bigint,
-    time_type bigint,
-    datarow_id bigint,
-    row_id bigint,
-    parent_row_id double precision,
-    update_time timestamp without time zone,
-    update_user text,
-    idxpath text,
-    assign_org bigint,
-    hash_id text,
-    rn text,
-    ind_name text,
-    ind_code text,
-    ind_unit text,
-    tt4 double precision,
-    tt5 double precision
-);
-
-
-ALTER TABLE public.bao_cao_thang_ktxh_huyen_lac_duong_4702 OWNER TO postgres;
-
---
--- Name: danhsach_hongheo_lacduong; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.danhsach_hongheo_lacduong (
-    dia_chi text,
-    gioi_tinh text,
-    ho_va_ten_chu_ho text,
-    import_version bigint,
-    loai_ho text,
-    ngay_thang_nam_sinh text,
-    so_khau double precision,
-    stt double precision,
-    xa_thi_tran text,
-    nam bigint
-);
-
-
-ALTER TABLE public.danhsach_hongheo_lacduong OWNER TO postgres;
-
---
--- Name: demo_pull_data; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.demo_pull_data (
-    id_hong text,
-    org_code_hong text,
-    ten_chi_tieu text,
-    ket_qua text
-);
-
-
-ALTER TABLE public.demo_pull_data OWNER TO postgres;
-
---
--- Name: history_bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.history_bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 (
-    rp_input_grant_id text,
-    org_id text,
-    prd_id text,
-    time_type text,
-    datarow_id text,
-    row_id text,
-    parent_row_id text,
-    update_time text,
-    update_user text,
-    idxpath text,
-    assign_org text,
-    hash_id text,
-    rn text,
-    ind_name text,
-    ind_code text,
-    ind_unit text,
-    tt4 text,
-    tt5 text,
-    key text,
-    start_active_date text,
-    end_active_date text,
-    status_active text
-);
-
-
-ALTER TABLE public.history_bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 OWNER TO postgres;
-
---
--- Name: history_bao_cao_thang_ktxh_huyen_lac_duong_4702; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.history_bao_cao_thang_ktxh_huyen_lac_duong_4702 (
-    rp_input_grant_id text,
-    org_id text,
-    prd_id text,
-    time_type text,
-    datarow_id text,
-    row_id text,
-    parent_row_id text,
-    update_time text,
-    update_user text,
-    idxpath text,
-    assign_org text,
-    hash_id text,
-    rn text,
-    ind_name text,
-    ind_code text,
-    ind_unit text,
-    tt4 text,
-    tt5 text,
-    key text,
-    start_active_date text,
-    end_active_date text,
-    status_active text
-);
-
-
-ALTER TABLE public.history_bao_cao_thang_ktxh_huyen_lac_duong_4702 OWNER TO postgres;
-
---
--- Name: history_bc_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.history_bc_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 (
-    rp_input_grant_id text,
-    org_id text,
-    prd_id text,
-    time_type text,
-    datarow_id text,
-    row_id text,
-    parent_row_id text,
-    update_time text,
-    update_user text,
-    idxpath text,
-    assign_org text,
-    hash_id text,
-    rn text,
-    ind_name text,
-    ind_code text,
-    ind_unit text,
-    tt1 text,
-    tt2 text,
-    key text,
-    start_active_date text,
-    end_active_date text,
-    status_active text
-);
-
-
-ALTER TABLE public.history_bc_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 OWNER TO postgres;
-
---
--- Name: rp_column; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.rp_column (
-    id bigint,
-    column_code text,
-    column_name text,
-    column_type bigint,
-    sum_type text,
-    column_constraint text,
-    ctl_width text,
-    ctl_maxlength text,
-    ctl_align text,
-    ctl_direction text,
-    note text,
-    parent_id text,
-    path text,
-    formula text,
-    priority text,
-    row_priority double precision,
-    percent_type double precision,
-    column_warning text,
-    ctl_id text,
-    report_id bigint,
-    fld_code text,
-    column_index text,
-    tenant_id bigint,
-    allow_get_ind text,
-    field_type_id text,
-    col_width double precision,
-    short_name text,
-    font_size text,
-    align text,
-    font_type text,
-    is_default double precision,
-    is_hidden text,
-    idx bigint,
-    column_list_id text,
-    is_unique_key boolean,
-    decimal_places bigint,
-    is_last_column text,
-    ref_formula text,
-    post_ref_formula text,
-    is_bold text
-);
-
-
-ALTER TABLE public.rp_column OWNER TO postgres;
-
---
--- Name: rp_input_grant; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.rp_input_grant (
-    id bigint,
-    report_id bigint,
-    org_id bigint,
-    assign_org bigint,
-    state_id bigint,
-    prd_id bigint,
-    note text,
-    input_fr text,
-    input_to text,
-    start_date timestamp without time zone,
-    end_date timestamp without time zone,
-    tenant_id bigint,
-    period_id bigint,
-    is_auto bigint,
-    update_time timestamp without time zone,
-    grant_type bigint,
-    time_type bigint,
-    update_user text,
-    ref_input_grant_id double precision,
-    is_seen double precision,
-    has_attach text,
-    version double precision,
-    is_file_only bigint,
-    import_sql text,
-    end_period_date date,
-    start_period_date date,
-    signed_pdf_path text,
-    note_html text,
-    ref_report_word_input_grant_id text,
-    idx_content text,
-    idx_header_content text,
-    idx_footer_content text,
-    approve_org text,
-    ref_rp_input_grant_ids text,
-    approve_and_synth_objidx_orgs text,
-    is_synthesized text,
-    mode text,
-    assign_user_id text,
-    input_user_id text,
-    synthetic_user_id text,
-    is_auto_fill_previous_period_data text,
-    allow_to_view_multiple_level boolean
-);
-
-
-ALTER TABLE public.rp_input_grant OWNER TO postgres;
-
---
--- Name: rp_period; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.rp_period (
-    id bigint,
-    tenant_id bigint,
-    org_id bigint,
-    period_type bigint,
-    period_name text,
-    start_date date,
-    end_date date,
-    description text,
-    auto_grant_value bigint
-);
-
-
-ALTER TABLE public.rp_period OWNER TO postgres;
-
---
--- Name: rp_process_log; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.rp_process_log (
-    id bigint,
-    report_id bigint,
-    input_grant_id bigint,
-    from_state bigint,
-    to_state bigint,
-    assign_org_id bigint,
-    org_id bigint,
-    time_type bigint,
-    prd_id bigint,
-    content text,
-    update_time timestamp without time zone,
-    update_user text,
-    tenant_id bigint,
-    note text
-);
-
-
-ALTER TABLE public.rp_process_log OWNER TO postgres;
-
---
--- Name: rp_program; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.rp_program (
-    id bigint,
-    org_id double precision,
-    tenant_id bigint,
-    nr text,
-    code text,
-    name text,
-    type bigint,
-    release_dt timestamp without time zone,
-    content text,
-    path text,
-    release_org text,
-    version text,
-    update_user text,
-    update_time timestamp without time zone,
-    status bigint,
-    program_type text,
-    ref_notation text
-);
-
-
-ALTER TABLE public.rp_program OWNER TO postgres;
-
---
--- Name: rp_report; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.rp_report (
-    id bigint,
-    report_name text,
-    parent_id text,
-    is_group bigint,
-    is_auto text,
-    org_id bigint,
-    status bigint,
-    report_type bigint,
-    time_type double precision,
-    due_date text,
-    program_id double precision,
-    tpl_path text,
-    doc_id text,
-    is_public text,
-    col_index_show text,
-    public_date text,
-    tenant_id bigint,
-    report_code text,
-    org_type text,
-    org_level text,
-    allow_add_ind text,
-    orgin_tenant text,
-    sync_type text,
-    form_code text,
-    sum_org_type text,
-    ref_id text,
-    autosum_org_type text,
-    ref_report_id text,
-    sync_date text,
-    org_code text,
-    update_user text,
-    update_time timestamp without time zone,
-    path text,
-    is_multi_sheet bigint,
-    rp_parent_report text,
-    sql_template text,
-    import_sql text,
-    allow_copy_row bigint,
-    multi_time_type text,
-    update_template_from_input double precision,
-    sheet_index text,
-    data_type text,
-    not_depend_on_assign_org_type double precision,
-    is_signature_required boolean,
-    signature_width double precision,
-    signature_height double precision,
-    survey_title_html text,
-    survey_title_text text,
-    survey_description_html text,
-    survey_description_text text,
-    is_inter_connect boolean,
-    is_add_rp_field_when_add_idx boolean,
-    config_multi_level_column text,
-    auto_approved boolean,
-    dashboard_url text,
-    allow_to_approve_by_item text,
-    freeze_columns text,
-    is_bold_column_name text
-);
-
-
-ALTER TABLE public.rp_report OWNER TO postgres;
-
---
--- Name: rp_row; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.rp_row (
-    id bigint,
-    row_code text,
-    row_name text,
-    row_type bigint,
-    row_unit text,
-    row_index text,
-    is_sumary double precision,
-    is_showcount text,
-    is_multi text,
-    parent_id double precision,
-    formula text,
-    note text,
-    report_id bigint,
-    width text,
-    is_footer double precision,
-    idx bigint,
-    tenant_id bigint,
-    field_id text,
-    org_id double precision,
-    allow_add_row text,
-    parent_field_id text,
-    update_time timestamp without time zone,
-    update_user text,
-    is_bold double precision,
-    is_last_row text,
-    is_default_row double precision,
-    not_add_below text,
-    custom_default_col_json text
-);
-
-
-ALTER TABLE public.rp_row OWNER TO postgres;
-
---
--- Name: sys_organization; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.sys_organization (
-    id bigint,
-    parent_id double precision,
-    org_type bigint,
-    org_code text,
-    org_name text,
-    org_level text,
-    note text,
-    db_name text,
-    db_schema text,
-    province_id text,
-    status bigint,
-    org_address text,
-    org_tax_code text,
-    org_bank_account text,
-    org_tel text,
-    org_fax text,
-    org_email text,
-    org_website text,
-    hospital_code text,
-    org_logo text,
-    logo_footer text,
-    branch_id text,
-    root_id bigint,
-    tenant_id bigint,
-    full_name text,
-    full_path text,
-    extra_info text,
-    approve_status text,
-    new_info text,
-    administrative_code text,
-    org_index text,
-    group_id text
-);
-
-
-ALTER TABLE public.sys_organization OWNER TO postgres;
-
---
--- Name: sys_organization_type; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.sys_organization_type (
-    id bigint,
-    level_id bigint,
-    name text,
-    code text,
-    category bigint,
-    parent text,
-    tenant_id bigint
-);
-
-
-ALTER TABLE public.sys_organization_type OWNER TO postgres;
-
---
--- Name: temp_rp_column; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.temp_rp_column (
-    id bigint,
-    column_code text,
-    column_name text,
-    column_type bigint,
-    sum_type text,
-    column_constraint text,
-    ctl_width text,
-    ctl_maxlength text,
-    ctl_align text,
-    ctl_direction text,
-    note text,
-    parent_id text,
-    path text,
-    formula text,
-    priority text,
-    row_priority double precision,
-    percent_type double precision,
-    column_warning text,
-    ctl_id text,
-    report_id bigint,
-    fld_code text,
-    column_index text,
-    tenant_id bigint,
-    allow_get_ind text,
-    field_type_id text,
-    col_width double precision,
-    short_name text,
-    font_size text,
-    align text,
-    font_type text,
-    is_default double precision,
-    is_hidden text,
-    idx bigint,
-    column_list_id text,
-    is_unique_key boolean,
-    decimal_places bigint,
-    is_last_column text,
-    ref_formula text,
-    post_ref_formula text,
-    is_bold text,
-    dynamic_formula_json text
-);
-
-
-ALTER TABLE public.temp_rp_column OWNER TO postgres;
-
---
--- Name: temp_rp_row; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.temp_rp_row (
-    id bigint,
-    row_code text,
-    row_name text,
-    row_type bigint,
-    row_unit text,
-    row_index text,
-    is_sumary double precision,
-    is_showcount text,
-    is_multi text,
-    parent_id double precision,
-    formula text,
-    note text,
-    report_id bigint,
-    width text,
-    is_footer double precision,
-    idx bigint,
-    tenant_id bigint,
-    field_id text,
-    org_id double precision,
-    allow_add_row text,
-    parent_field_id text,
-    update_time timestamp without time zone,
-    update_user text,
-    is_bold double precision,
-    is_last_row text,
-    is_default_row double precision,
-    not_add_below text,
-    custom_default_col_json text,
-    row_information text
-);
-
-
-ALTER TABLE public.temp_rp_row OWNER TO postgres;
-
---
--- Name: ty_le_ho_ngheo_lacduong; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.ty_le_ho_ngheo_lacduong (
-    ho_dtts bigint,
-    import_version bigint,
-    mo_ta text,
-    stt text,
-    ten_don_vi text,
-    tong_so double precision,
-    ty_le double precision,
-    tyle_dtts double precision,
-    nam bigint
-);
+    CREATE TABLE public.bang_test_demo (
+        "Test_Don_Vi_Tinh" text,
+        "Test_ma_so" text,
+        "Test_prd_id" bigint
+    );
+
+
+    ALTER TABLE public.bang_test_demo OWNER TO postgres;
+
+    --
+    -- Name: bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 (
+        rp_input_grant_id bigint,
+        org_id bigint,
+        prd_id bigint,
+        time_type bigint,
+        datarow_id bigint,
+        row_id bigint,
+        parent_row_id double precision,
+        update_time timestamp without time zone,
+        update_user text,
+        idxpath text,
+        assign_org bigint,
+        hash_id text,
+        rn text,
+        ind_name text,
+        ind_code text,
+        ind_unit text,
+        tt4 double precision,
+        tt5 double precision
+    );
+
+
+    ALTER TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 OWNER TO postgres;
+
+    --
+    -- Name: bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 (
+        rp_input_grant_id bigint,
+        org_id bigint,
+        prd_id bigint,
+        time_type bigint,
+        datarow_id bigint,
+        row_id bigint,
+        parent_row_id text,
+        update_time timestamp without time zone,
+        update_user text,
+        idxpath text,
+        assign_org bigint,
+        hash_id text,
+        rn text,
+        ind_name text,
+        ind_code text,
+        ind_unit text,
+        tt1 double precision,
+        tt2 double precision
+    );
+
+
+    ALTER TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 OWNER TO postgres;
+
+    --
+    -- Name: bao_cao_thang_ktxh_huyen_lac_duong_4702; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.bao_cao_thang_ktxh_huyen_lac_duong_4702 (
+        rp_input_grant_id bigint,
+        org_id bigint,
+        prd_id bigint,
+        time_type bigint,
+        datarow_id bigint,
+        row_id bigint,
+        parent_row_id double precision,
+        update_time timestamp without time zone,
+        update_user text,
+        idxpath text,
+        assign_org bigint,
+        hash_id text,
+        rn text,
+        ind_name text,
+        ind_code text,
+        ind_unit text,
+        tt4 double precision,
+        tt5 double precision
+    );
+
+
+    ALTER TABLE public.bao_cao_thang_ktxh_huyen_lac_duong_4702 OWNER TO postgres;
+
+    --
+    -- Name: danhsach_hongheo_lacduong; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.danhsach_hongheo_lacduong (
+        dia_chi text,
+        gioi_tinh text,
+        ho_va_ten_chu_ho text,
+        import_version bigint,
+        loai_ho text,
+        ngay_thang_nam_sinh text,
+        so_khau double precision,
+        stt double precision,
+        xa_thi_tran text,
+        nam bigint
+    );
+
+
+    ALTER TABLE public.danhsach_hongheo_lacduong OWNER TO postgres;
+
+    --
+    -- Name: demo_pull_data; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.demo_pull_data (
+        id_hong text,
+        org_code_hong text,
+        ten_chi_tieu text,
+        ket_qua text
+    );
+
+
+    ALTER TABLE public.demo_pull_data OWNER TO postgres;
+
+    --
+    -- Name: history_bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.history_bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 (
+        rp_input_grant_id text,
+        org_id text,
+        prd_id text,
+        time_type text,
+        datarow_id text,
+        row_id text,
+        parent_row_id text,
+        update_time text,
+        update_user text,
+        idxpath text,
+        assign_org text,
+        hash_id text,
+        rn text,
+        ind_name text,
+        ind_code text,
+        ind_unit text,
+        tt4 text,
+        tt5 text,
+        key text,
+        start_active_date text,
+        end_active_date text,
+        status_active text
+    );
+
+
+    ALTER TABLE public.history_bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 OWNER TO postgres;
+
+    --
+    -- Name: history_bao_cao_thang_ktxh_huyen_lac_duong_4702; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.history_bao_cao_thang_ktxh_huyen_lac_duong_4702 (
+        rp_input_grant_id text,
+        org_id text,
+        prd_id text,
+        time_type text,
+        datarow_id text,
+        row_id text,
+        parent_row_id text,
+        update_time text,
+        update_user text,
+        idxpath text,
+        assign_org text,
+        hash_id text,
+        rn text,
+        ind_name text,
+        ind_code text,
+        ind_unit text,
+        tt4 text,
+        tt5 text,
+        key text,
+        start_active_date text,
+        end_active_date text,
+        status_active text
+    );
+
+
+    ALTER TABLE public.history_bao_cao_thang_ktxh_huyen_lac_duong_4702 OWNER TO postgres;
+
+    --
+    -- Name: history_bc_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.history_bc_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 (
+        rp_input_grant_id text,
+        org_id text,
+        prd_id text,
+        time_type text,
+        datarow_id text,
+        row_id text,
+        parent_row_id text,
+        update_time text,
+        update_user text,
+        idxpath text,
+        assign_org text,
+        hash_id text,
+        rn text,
+        ind_name text,
+        ind_code text,
+        ind_unit text,
+        tt1 text,
+        tt2 text,
+        key text,
+        start_active_date text,
+        end_active_date text,
+        status_active text
+    );
+
+
+    ALTER TABLE public.history_bc_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 OWNER TO postgres;
+
+    --
+    -- Name: rp_column; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.rp_column (
+        id bigint,
+        column_code text,
+        column_name text,
+        column_type bigint,
+        sum_type text,
+        column_constraint text,
+        ctl_width text,
+        ctl_maxlength text,
+        ctl_align text,
+        ctl_direction text,
+        note text,
+        parent_id text,
+        path text,
+        formula text,
+        priority text,
+        row_priority double precision,
+        percent_type double precision,
+        column_warning text,
+        ctl_id text,
+        report_id bigint,
+        fld_code text,
+        column_index text,
+        tenant_id bigint,
+        allow_get_ind text,
+        field_type_id text,
+        col_width double precision,
+        short_name text,
+        font_size text,
+        align text,
+        font_type text,
+        is_default double precision,
+        is_hidden text,
+        idx bigint,
+        column_list_id text,
+        is_unique_key boolean,
+        decimal_places bigint,
+        is_last_column text,
+        ref_formula text,
+        post_ref_formula text,
+        is_bold text
+    );
+
+
+    ALTER TABLE public.rp_column OWNER TO postgres;
+
+    --
+    -- Name: rp_input_grant; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.rp_input_grant (
+        id bigint,
+        report_id bigint,
+        org_id bigint,
+        assign_org bigint,
+        state_id bigint,
+        prd_id bigint,
+        note text,
+        input_fr text,
+        input_to text,
+        start_date timestamp without time zone,
+        end_date timestamp without time zone,
+        tenant_id bigint,
+        period_id bigint,
+        is_auto bigint,
+        update_time timestamp without time zone,
+        grant_type bigint,
+        time_type bigint,
+        update_user text,
+        ref_input_grant_id double precision,
+        is_seen double precision,
+        has_attach text,
+        version double precision,
+        is_file_only bigint,
+        import_sql text,
+        end_period_date date,
+        start_period_date date,
+        signed_pdf_path text,
+        note_html text,
+        ref_report_word_input_grant_id text,
+        idx_content text,
+        idx_header_content text,
+        idx_footer_content text,
+        approve_org text,
+        ref_rp_input_grant_ids text,
+        approve_and_synth_objidx_orgs text,
+        is_synthesized text,
+        mode text,
+        assign_user_id text,
+        input_user_id text,
+        synthetic_user_id text,
+        is_auto_fill_previous_period_data text,
+        allow_to_view_multiple_level boolean
+    );
+
+
+    ALTER TABLE public.rp_input_grant OWNER TO postgres;
+
+    --
+    -- Name: rp_period; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.rp_period (
+        id bigint,
+        tenant_id bigint,
+        org_id bigint,
+        period_type bigint,
+        period_name text,
+        start_date date,
+        end_date date,
+        description text,
+        auto_grant_value bigint
+    );
+
+
+    ALTER TABLE public.rp_period OWNER TO postgres;
+
+    --
+    -- Name: rp_process_log; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.rp_process_log (
+        id bigint,
+        report_id bigint,
+        input_grant_id bigint,
+        from_state bigint,
+        to_state bigint,
+        assign_org_id bigint,
+        org_id bigint,
+        time_type bigint,
+        prd_id bigint,
+        content text,
+        update_time timestamp without time zone,
+        update_user text,
+        tenant_id bigint,
+        note text
+    );
+
+
+    ALTER TABLE public.rp_process_log OWNER TO postgres;
+
+    --
+    -- Name: rp_program; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.rp_program (
+        id bigint,
+        org_id double precision,
+        tenant_id bigint,
+        nr text,
+        code text,
+        name text,
+        type bigint,
+        release_dt timestamp without time zone,
+        content text,
+        path text,
+        release_org text,
+        version text,
+        update_user text,
+        update_time timestamp without time zone,
+        status bigint,
+        program_type text,
+        ref_notation text
+    );
+
+
+    ALTER TABLE public.rp_program OWNER TO postgres;
+
+    --
+    -- Name: rp_report; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.rp_report (
+        id bigint,
+        report_name text,
+        parent_id text,
+        is_group bigint,
+        is_auto text,
+        org_id bigint,
+        status bigint,
+        report_type bigint,
+        time_type double precision,
+        due_date text,
+        program_id double precision,
+        tpl_path text,
+        doc_id text,
+        is_public text,
+        col_index_show text,
+        public_date text,
+        tenant_id bigint,
+        report_code text,
+        org_type text,
+        org_level text,
+        allow_add_ind text,
+        orgin_tenant text,
+        sync_type text,
+        form_code text,
+        sum_org_type text,
+        ref_id text,
+        autosum_org_type text,
+        ref_report_id text,
+        sync_date text,
+        org_code text,
+        update_user text,
+        update_time timestamp without time zone,
+        path text,
+        is_multi_sheet bigint,
+        rp_parent_report text,
+        sql_template text,
+        import_sql text,
+        allow_copy_row bigint,
+        multi_time_type text,
+        update_template_from_input double precision,
+        sheet_index text,
+        data_type text,
+        not_depend_on_assign_org_type double precision,
+        is_signature_required boolean,
+        signature_width double precision,
+        signature_height double precision,
+        survey_title_html text,
+        survey_title_text text,
+        survey_description_html text,
+        survey_description_text text,
+        is_inter_connect boolean,
+        is_add_rp_field_when_add_idx boolean,
+        config_multi_level_column text,
+        auto_approved boolean,
+        dashboard_url text,
+        allow_to_approve_by_item text,
+        freeze_columns text,
+        is_bold_column_name text
+    );
+
+
+    ALTER TABLE public.rp_report OWNER TO postgres;
+
+    --
+    -- Name: rp_row; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.rp_row (
+        id bigint,
+        row_code text,
+        row_name text,
+        row_type bigint,
+        row_unit text,
+        row_index text,
+        is_sumary double precision,
+        is_showcount text,
+        is_multi text,
+        parent_id double precision,
+        formula text,
+        note text,
+        report_id bigint,
+        width text,
+        is_footer double precision,
+        idx bigint,
+        tenant_id bigint,
+        field_id text,
+        org_id double precision,
+        allow_add_row text,
+        parent_field_id text,
+        update_time timestamp without time zone,
+        update_user text,
+        is_bold double precision,
+        is_last_row text,
+        is_default_row double precision,
+        not_add_below text,
+        custom_default_col_json text
+    );
+
+
+    ALTER TABLE public.rp_row OWNER TO postgres;
+
+    --
+    -- Name: sys_organization; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.sys_organization (
+        id bigint,
+        parent_id double precision,
+        org_type bigint,
+        org_code text,
+        org_name text,
+        org_level text,
+        note text,
+        db_name text,
+        db_schema text,
+        province_id text,
+        status bigint,
+        org_address text,
+        org_tax_code text,
+        org_bank_account text,
+        org_tel text,
+        org_fax text,
+        org_email text,
+        org_website text,
+        hospital_code text,
+        org_logo text,
+        logo_footer text,
+        branch_id text,
+        root_id bigint,
+        tenant_id bigint,
+        full_name text,
+        full_path text,
+        extra_info text,
+        approve_status text,
+        new_info text,
+        administrative_code text,
+        org_index text,
+        group_id text
+    );
+
+
+    ALTER TABLE public.sys_organization OWNER TO postgres;
+
+    --
+    -- Name: sys_organization_type; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.sys_organization_type (
+        id bigint,
+        level_id bigint,
+        name text,
+        code text,
+        category bigint,
+        parent text,
+        tenant_id bigint
+    );
+
+
+    ALTER TABLE public.sys_organization_type OWNER TO postgres;
+
+    --
+    -- Name: temp_rp_column; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.temp_rp_column (
+        id bigint,
+        column_code text,
+        column_name text,
+        column_type bigint,
+        sum_type text,
+        column_constraint text,
+        ctl_width text,
+        ctl_maxlength text,
+        ctl_align text,
+        ctl_direction text,
+        note text,
+        parent_id text,
+        path text,
+        formula text,
+        priority text,
+        row_priority double precision,
+        percent_type double precision,
+        column_warning text,
+        ctl_id text,
+        report_id bigint,
+        fld_code text,
+        column_index text,
+        tenant_id bigint,
+        allow_get_ind text,
+        field_type_id text,
+        col_width double precision,
+        short_name text,
+        font_size text,
+        align text,
+        font_type text,
+        is_default double precision,
+        is_hidden text,
+        idx bigint,
+        column_list_id text,
+        is_unique_key boolean,
+        decimal_places bigint,
+        is_last_column text,
+        ref_formula text,
+        post_ref_formula text,
+        is_bold text,
+        dynamic_formula_json text
+    );
+
+
+    ALTER TABLE public.temp_rp_column OWNER TO postgres;
+
+    --
+    -- Name: temp_rp_row; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.temp_rp_row (
+        id bigint,
+        row_code text,
+        row_name text,
+        row_type bigint,
+        row_unit text,
+        row_index text,
+        is_sumary double precision,
+        is_showcount text,
+        is_multi text,
+        parent_id double precision,
+        formula text,
+        note text,
+        report_id bigint,
+        width text,
+        is_footer double precision,
+        idx bigint,
+        tenant_id bigint,
+        field_id text,
+        org_id double precision,
+        allow_add_row text,
+        parent_field_id text,
+        update_time timestamp without time zone,
+        update_user text,
+        is_bold double precision,
+        is_last_row text,
+        is_default_row double precision,
+        not_add_below text,
+        custom_default_col_json text,
+        row_information text
+    );
+
+
+    ALTER TABLE public.temp_rp_row OWNER TO postgres;
+
+    --
+    -- Name: ty_le_ho_ngheo_lacduong; Type: TABLE; Schema: public; Owner: postgres
+    --
+
+    CREATE TABLE public.ty_le_ho_ngheo_lacduong (
+        ho_dtts bigint,
+        import_version bigint,
+        mo_ta text,
+        stt text,
+        ten_don_vi text,
+        tong_so double precision,
+        ty_le double precision,
+        tyle_dtts double precision,
+        nam bigint
+    );
 
 
 ALTER TABLE public.ty_le_ho_ngheo_lacduong OWNER TO postgres;

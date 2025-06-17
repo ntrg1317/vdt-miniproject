@@ -279,3 +279,54 @@ SELECT * FROM catalog.v_table_fields
 WHERE database = 'ecommerce' AND schema = 'sales'
 ORDER BY tablename, position;
 */
+
+
+-- =====================================================
+-- DASHBOARD VÀ CHART
+-- Lưu trữ các biểu đồ trong các dashboard
+-- =====================================================
+
+-- Bảng dashboards
+CREATE TABLE catalog.dashboards (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL, -- Tên dashboard
+    description TEXT,    -- Mô tả dashboard
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Thời điểm tạo
+);
+
+-- Thêm comment cho bảng và cột
+COMMENT ON TABLE catalog.dashboards IS 'Danh sách dashboard chứa các biểu đồ';
+COMMENT ON COLUMN catalog.dashboards.id IS 'Khóa chính';
+COMMENT ON COLUMN catalog.dashboards.name IS 'Tên của dashboard';
+COMMENT ON COLUMN catalog.dashboards.description IS 'Mô tả chi tiết dashboard';
+COMMENT ON COLUMN catalog.dashboards.created_at IS 'Thời điểm tạo dashboard';
+
+-- Tạo bảng charts
+CREATE TABLE catalog.charts (
+    id SERIAL PRIMARY KEY,
+    dashboard_id INTEGER NOT NULL REFERENCES catalog.dashboards(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,      -- Tên biểu đồ
+    title TEXT,              -- Tiêu đề hiển thị
+    type TEXT NOT NULL,      -- Loại biểu đồ: bar, line, pie, ...
+    config JSONB,            -- Cấu hình vẽ (cột x, y, template, v.v.)
+    filters JSONB,           -- Điều kiện lọc dữ liệu
+    json_data JSONB,         -- Dữ liệu biểu đồ (Plotly JSON)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Comment cho bảng và các cột
+COMMENT ON TABLE catalog.charts IS 'Danh sách biểu đồ thuộc về các dashboard';
+COMMENT ON COLUMN catalog.charts.id IS 'Khóa chính';
+COMMENT ON COLUMN catalog.charts.dashboard_id IS 'Khóa ngoại đến dashboard';
+COMMENT ON COLUMN catalog.charts.name IS 'Tên biểu đồ, dùng nội bộ';
+COMMENT ON COLUMN catalog.charts.title IS 'Tiêu đề biểu đồ hiển thị';
+COMMENT ON COLUMN catalog.charts.type IS 'Loại biểu đồ (bar, line, pie, v.v.)';
+COMMENT ON COLUMN catalog.charts.config IS 'Cấu hình biểu đồ';
+COMMENT ON COLUMN catalog.charts.filters IS 'Điều kiện lọc dữ liệu';
+COMMENT ON COLUMN catalog.charts.json_data IS 'Dữ liệu Plotly JSON';
+COMMENT ON COLUMN catalog.charts.created_at IS 'Thời điểm tạo biểu đồ';
+
+-- Tạo chỉ mục (indexes)
+CREATE INDEX idx_dashboards_name ON catalog.dashboards(name);
+CREATE INDEX idx_charts_dashboard_id ON catalog.charts(dashboard_id);
+CREATE INDEX idx_charts_type ON catalog.charts(type);
