@@ -8,6 +8,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from config.settings import settings
+from src.utils.chatbot import *
 
 # Streamlit page config
 st.set_page_config(
@@ -23,7 +24,6 @@ st.set_page_config(
 def init_connection():
     engine = create_engine(settings.target_database_url)
     return engine
-
 
 # Load dashboard data
 @st.cache_data
@@ -80,6 +80,22 @@ def parse_filters(row):
 def main():
     st.title("📊 Dashboard Charts Viewer")
     st.markdown("---")
+
+    # Load metadata từ database
+    try:
+        engine = init_connection()
+        metadata_df = load_metadata(engine)
+
+        st.sidebar.header("🧠 Metadata Chatbot")
+        user_question = st.sidebar.text_input("Hỏi về bảng/cột dữ liệu:")
+
+        if user_question:
+            with st.spinner("Đang trả lời..."):
+                response = ask_metadata_bot(user_question, metadata_df)
+                st.sidebar.success(response)
+
+    except Exception as e:
+        st.sidebar.error(f"Lỗi khi tải metadata/chatbot: {str(e)}")
 
     # Sidebar for dashboard selection
     st.sidebar.header("Dashboard Selection")
