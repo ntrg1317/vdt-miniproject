@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import *
 import json
-from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy import create_engine, MetaData, Table, text
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+from sqlalchemy.dialects.postgresql import insert
 
 from config.settings import settings
 
@@ -12,6 +13,9 @@ from config.settings import settings
 class ChartService:
     def __init__(self, engine):
         self.engine = engine
+        self.meta = MetaData()
+        self.meta.reflect(bind=self.engine, schema="catalog")
+        self.charts = self.meta.tables['catalog.charts']
 
     def create_chart(self, data: pd.DataFrame, chart_type: str, title: str,
                      config: Optional[Dict[str, Any]] = None,
@@ -19,18 +23,15 @@ class ChartService:
         if config is None:
             config = {}
 
-        if filters:
-            for column, value in filters.items():
-                data = data[data[column] == value]
+        # if filters:
+        #     for column, value in filters.items():
+        #         data = data[data[column] == value]
 
         chart_creators = {
             'bar': self.create_bar_chart,
             'line': self.create_line_chart,
             'pie': self.create_pie_chart,
-            'scatter': self.create_scatter_chart,
-            'box': self.create_box_chart,
-            'histogram': self.create_histogram_chart,
-            'heatmap': self.create_heatmap_chart,
+            'dial': self.create_dial_chart,
         }
 
         if chart_type not in chart_creators:
@@ -50,13 +51,41 @@ class ChartService:
     def create_bar_chart(self, data: pd.DataFrame, title: str, config: Dict[str, Any]) -> go.Figure:
         x_col = config.get('x_column', data.columns[0])
         y_col = config.get('y_column', data.columns[1] if len(data.columns) > 1 else data.columns[0])
+        color_col = config.get('color_column')  # for grouped/stacked bars
+        orientation = config.get('orientation', 'v')  # 'v' (vertical) or 'h' (horizontal)
+        barmode = config.get('barmode', 'group')  # 'group' or 'stack'
         x_title = config.get('x_title', x_col)
-        y_title = config.get('y_title', y_col)
+        y_title = config.get('y_title', y_col) + ' (' + config.get('unit', '') + ')'
 
-        fig = px.bar(data, x=x_col, y=y_col, title=title)
+        if orientation not in ['v', 'h']:
+            orientation = 'v'
+
+        if orientation == 'h':
+            x_axis = y_col
+            y_axis = x_col
+            x_title = x_title
+            y_title = y_title
+        else:
+            x_axis = x_col
+            y_axis = y_col
+            x_title = x_title
+            y_title = y_title
+
+            # Create the bar chart
+        fig = px.bar(
+            data,
+            x=x_axis,
+            y=y_axis,
+            color=color_col if color_col and color_col in data.columns else None,
+            title=title,
+            orientation=orientation
+        )
+
+        # Apply layout settings
         fig.update_layout(
-            xaxis_title=config.get('x_title', x_title),
-            yaxis_title=config.get('y_title', y_title),
+            barmode=barmode,  # 'group', 'stack', or 'relative'
+            xaxis_title=x_title,
+            yaxis_title=y_title,
             template='plotly_white'
         )
 
@@ -83,65 +112,57 @@ class ChartService:
         fig.update_layout(template='plotly_white')
         return fig
 
-    def create_scatter_chart(self, data: pd.DataFrame, title: str, config: Optional[Dict[str, Any]] = None) -> go.Figure:
-        x_col = config.get('x_column', data.columns[0])
-        y_col = config.get('y_column', data.columns[1] if len(data.columns) > 1 else data.columns[0])
+    def create_dial_chart(self, data: pd.DataFrame, title: str, config: Optional[Dict[str, Any]] = None) -> go.Figure:
+        value_col = config.get('value_column', data.columns[0])
+        threshold_col = config.get('threshold_column', data.columns[1] if len(data.columns) > 1 else data.columns[0])
 
-        fig = px.scatter(data, x=x_col, y=y_col, title=title)
-        fig.update_layout(
-            xaxis_title=config.get('x_title', x_col),
-            yaxis_title=config.get('y_title', y_col),
-            template='plotly_white'
+        fig = go.Figure(go.Indicator(
+            mode = "gauge+number",
+            value = value_col,
+            title = {"text": title},
+            domain = {"x": [0, 1], "y": [0, 1]},
+            gauge = {
+                "axis": {"range": [0, 100]},
+                "bar": {"color": "darkblue"},
+                "bgcolor": "white",
+                "borderwidth": 2,
+                "bordercolor": "gray",
+                'steps': [
+                    {'range': [0, 25], 'color': "lightgray"},
+                    {'range': [25, 75], 'color': "gray"},
+                    {'range': [75, 100], 'color': "darkgray"}
+                ],
+                'threshold': {
+                    'line': {'color': "red", 'width': 4},
+                    'thickness': 0.75,
+                    'value': threshold_col
+                }
+            }
+        ))
+
+        # Add invisible scatter trace for threshold tooltip
+        fig.add_annotation(
+            x=0.5,
+            y=-0.15,
+            text=f"Target: {threshold_col}",
+            showarrow=False,
+            font=dict(size=14, color="red"),
+            xref="paper",
+            yref="paper"
         )
-        return fig
 
-    def create_box_chart(self, data: pd.DataFrame, title: str, config: Optional[Dict[str, Any]] = None) -> go.Figure:
-        y_col = config.get('y_column', data.columns[0])
-        x_col = config.get('x_column', None)
-
-        if x_col:
-            fig = px.box(data, x=x_col, y=y_col, title=title)
-        else:
-            fig = px.box(data, y=y_col, title=title)
-
-        fig.update_layout(template='plotly_white')
-        return fig
-
-    def create_histogram_chart(self, data: pd.DataFrame, title: str, config: Optional[Dict[str, Any]] = None) -> go.Figure:
-        x_col = config.get('x_column', data.columns[0])
-
-        fig = px.histogram(data, x=x_col, title=title)
         fig.update_layout(
-            xaxis_title=config.get('x_title', x_col),
-            yaxis_title='Count',
-            template='plotly_white'
+            template='plotly_white',
+            height=400
         )
+
         return fig
 
-    def create_heatmap_chart(self, data: pd.DataFrame, title: str, config: Optional[Dict[str, Any]] = None) -> go.Figure:
-        if 'pivot_index' in config and 'pivot_columns' in config and 'pivot_values' in config:
-            pivot_data = data.pivot_table(
-                index=config['pivot_index'],
-                columns=config['pivot_columns'],
-                values=config['pivot_values'],
-                aggfunc='mean'
-            )
-            fig = px.imshow(pivot_data, title=title, aspect='auto')
-        else:
-            # Create correlation heatmap for numeric columns
-            numeric_data = data.select_dtypes(include=['number'])
-            corr_matrix = numeric_data.corr()
-            fig = px.imshow(corr_matrix, title=title, aspect='auto')
-
-        fig.update_layout(template='plotly_white')
-        return fig
-
-    def save_chart(self, name: str, title: str, chart_type: str, json_data: str,
+    def save_chart(self, dashboard_id:int, name: str, title: str, chart_type: str, json_data: str,
                      config: Dict[str, Any], filters: Optional[Dict[str, Any]] = None):
-        metadata = MetaData()
-        charts = Table('catalog.charts', metadata, autoload_with=self.engine)
 
-        stmt = charts.insert().values(
+        stmt = insert(self.charts).values(
+            dashboard_id=dashboard_id,
             name=name,
             title=title,
             type=chart_type,
@@ -149,10 +170,29 @@ class ChartService:
             config=config,
             filters=filters or {},
             created_at=datetime.now()
-        ).returning(charts.c.id)
+        ).on_conflict_do_update(
+            index_elements=['id'],  # cột bị xung đột
+            set_={
+                'dashboard_id': dashboard_id,
+                'name': name,
+                'title': title,
+                'type': chart_type,
+                'json_data': json.loads(json_data),
+                'config': config,
+                'filters': filters or {},
+                'created_at': datetime.now()
+            }
+        )
 
+        try:
+            with self.engine.connect() as conn:
+                conn.execute(stmt)
+                conn.commit()
+        except Exception as e:
+            print(f"Error saving chart: {e}")
+            raise e
+
+    def truncate_charts(self):
         with self.engine.connect() as conn:
-            result = conn.execute(stmt)
-            chart_id = result.scalar()
-
-        return chart_id
+            conn.execute(text(f"TRUNCATE TABLE {self.charts} RESTART IDENTITY"))
+            conn.commit()
