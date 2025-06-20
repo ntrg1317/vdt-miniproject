@@ -86,3 +86,40 @@ WHERE tablename = 'temp_rp_row';
 UPDATE catalog.table_origin
 SET business_term = 'Dòng báo cáo động'
 WHERE tablename = 'rp_row';
+
+
+UPDATE catalog.field_origin
+SET business_term = 'Tổ chức phát hành báo cáo'
+WHERE field = 'release_org';
+
+UPDATE catalog.field_origin
+SET business_term = 'Trạng thái của báo cáo (1: hoạt động, 0: ngừng)'
+WHERE field = 'status';
+
+UPDATE catalog.field_origin
+SET business_term = 'Thời gian cập nhật gần nhất'
+WHERE field = 'update_time';
+
+UPDATE catalog.field_origin
+SET business_term = 'Chuyển sang trạng thái'
+WHERE field = 'to_state';
+
+UPDATE catalog.field_origin
+SET business_term = 'Đường dẫn index phân cấp'
+WHERE field = 'idxpath';
+
+UPDATE catalog.field_origin
+SET business_term = 'Đơn vị chỉ tiêu'
+WHERE field = 'ind_unit';
+
+UPDATE catalog.field_origin
+SET business_term = 'Loại cột dữ liệu'
+WHERE field = 'column_type';
+
+UPDATE catalog.field_origin
+SET business_term = 'Giá trị thực tế tháng hiện tại (tt4)'
+WHERE field = 'tt4';
+
+UPDATE catalog.field_origin
+SET business_term = 'Mã báo cáo định danh'
+WHERE field = 'report_code';
