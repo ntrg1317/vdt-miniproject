@@ -1,94 +1,137 @@
-# PostgreSQL Database Synchronization with Kafka & Debezium
+# 📊 Socio-Economic Report Dashboard with Chatbot Q\&A
 
-## Overview
-This project demonstrates real-time database synchronization between two PostgreSQL databases using Kafka and Debezium, with automated data transformation. The system captures changes from a source PostgreSQL database and replicates them to a target database while combining `first_name` and `last_name` fields into a `full_name` field.
+This project is a **data dashboard system** for managing and visualizing socio-economic (KTXH) reports stored in PostgreSQL. It includes:
 
-## Architecture
+* 📈 Auto-generated charts from data tables
+* 🗂️ Metadata management for tables and fields
+* 🤖 A chatbot assistant that can answer questions about the database and charts using OpenAI or similar models
+* ⚡ Real-time interactivity using Streamlit
 
-### Components
-- **Source PostgreSQL**: Primary database where original data resides
-- **Debezium**: Captures change data from source PostgreSQL
-- **Apache Kafka**: Message broker for change events
-- **Kafka Connect**: Manages connectors for data streaming
-- **Target PostgreSQL**: Destination database with transformed data
+---
 
-### Data Flow
-1. Changes made to source PostgreSQL
-2. Debezium captures changes via PostgreSQL WAL
-3. Changes are published to Kafka topics
-4. Kafka Connect sink processes and transforms the data
-5. Transformed data is written to target PostgreSQL
+## 🚀 Features
 
-## Prerequisites
-- Docker & Docker Compose
-- cURL
-- Free ports for:
-  - Kafka (9092)
-  - Kafka Connect (8083)
-  - PostgreSQL source (5432)
-  - PostgreSQL target (5433)
+* **Chart Generation**: Automatically generate and render charts based on report data and `ind_code`
+* **Metadata System**: Track descriptions of all tables and fields in `catalog.table_origin` and `catalog.field_origin`
+* **Dashboard View**: Display multiple charts with title, description, and filters (e.g., `prd_id`, `org_id`)
+* **Chatbot Integration**: Ask natural language questions about:
 
-## Quick Start
+  * Dataset content
+  * Chart meaning
+  * SQL queries
+* **Streamlit UI**: User-friendly web interface for interactive data exploration and Q\&A
 
-### 1. Start Services
-Launch all required containers:
-```bash
-docker compose up -d
+---
+
+## 💃 Project Structure
+
+```
+vdt-miniproject/
+├── src/
+│   ├── catalog/              # Metadata generation and storage
+│   │   ├── gen_metadata.py
+│   ├── charts/               # Chart generation logic
+│   │   ├── report.py
+│   ├── dashboard/            # Streamlit dashboard interface
+│   │   ├── dashboard.py
+│   ├── chatbot/              # Chatbot prompt logic and integration
+│   │   ├── ask.py
+│
+├── data/                     # Static or exported data (optional)
+├── requirements.txt
+└── README.md
 ```
 
-### 2. Configure Source Connector
-Deploy the Debezium PostgreSQL source connector:
-```bash
-curl -X POST
--H "Accept:application/json"
--H "Content-Type:application/json"
---data @config/postgresql/postgres-source.json
-http://localhost:8083/connectors
-```
+---
 
-List all connectors
-```bash
-curl -X GET http://localhost:8083/connectors/
-```
-Check specific connector status
-```bash
-curl -X GET http://localhost:8083/connectors/{connector-name}/status
-```
+## 📃 Tech Stack
 
-### 3. Run Python program
+* **Backend**: Python, Pandas, SQLAlchemy
+* **Database**: PostgreSQL 17
+* **Dashboard UI**: [Streamlit](https://streamlit.io/)
+* **Charting**: [Plotly](https://plotly.com/python/)
+* **Chatbot**: [OpenAI GPT-4](https://platform.openai.com/) (optional)
+
+---
+
+## 🧰 Sample Tables
+
+* `bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753`: main data table for charting
+* `catalog.table_origin`: stores metadata about tables
+* `catalog.field_origin`: stores metadata about columns
+* `rp_report`, `rp_input_grant`, `rp_period`, `sys_organization`: supporting metadata
+
+---
+
+## ⚙️ Installation
+
+### 1. Clone & Install
+
 ```bash
+git clone https://github.com/your-org/vdt-miniproject.git
+cd vdt-miniproject
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
+
+### 2. Configure PostgreSQL
+
+Make sure your PostgreSQL is running with required tables and metadata loaded.
+
+Update variables in .env files:
+
 ```bash
-python src/transform/concat_name.py
+copy sample.env .env
 ```
 
-## Demo
+---
 
-Kafka UI displays changes in the source database
+## 🧱 Usage
 
-![kafka-ui.png](assets/kafka-ui.png)
+### ➔ Generate Metadata
 
-### Insert a new user
-
-In PostgreSQL, execute the following query to insert a new user into the `vdt` schema:
-```sql
-INSERT INTO vdt.users(first_name, last_name, email)
-VALUES ('Duyen', 'Ha', 'duyssde6111@gmail.com');
+```bash
+python3 -m src.catalog.main
 ```
 
-A new message with operation = 'c' (create) is created in Kafka:
+### ➔ Generate Dashboard and Charts
 
-![demo-insert.png](assets/demo-insert.png)
-
-### Update First Name to 'Trang'
-```sql
-UPDATE vdt.users
-SET first_name ='Trang'
-WHERE id = 19;
+```bash
+python3 -m src.catalog.gen_dash
 ```
-A new message with operation = 'u' (update) is created in Kafka:
-![demo-update.png](assets/demo-update.png)
 
-### Output
-![output.png](assets/output.png)
+### ➔ Launch Dashboard with Chatbot
+
+```bash
+streamlit run src/dashboard.py
+```
+
+---
+
+## 💡 Future Plans
+
+* ✅ Add support for different chart types (pie, area)
+* ⌛ Add export/download chart feature
+* 🔍 Use embedding + vector database to make chatbot more accurate
+* 🔒 Add user authentication for dashboard
+
+---
+
+## 🤖 Chatbot Prompts (Examples)
+
+> "bảng nào báo cáo chỉ tiêu tháng?"
+
+> "Bảng bao cao chi tieu thang 7753 có các cột nào"
+
+> "Cột tt4 mang ý nghĩa gì?"
+
+---
+
+## 📬 Contact
+
+Developed by TrangNT – 2025\
+📧 Email: [trangnt1317@gmail.com](mailto:trangnt1317@gmail.com)
+🔗 [GitHub Profile](https://github.com/ntrg1317)
+
+---
