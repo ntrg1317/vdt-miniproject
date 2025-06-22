@@ -21,26 +21,6 @@ This project is a **data dashboard system** for managing and visualizing socio-e
   * SQL queries
 * **Streamlit UI**: User-friendly web interface for interactive data exploration and Q\&A
 
----
-
-## 💃 Project Structure
-
-```
-vdt-miniproject/
-├── src/
-│   ├── catalog/              # Metadata generation and storage
-│   │   ├── gen_metadata.py
-│   ├── charts/               # Chart generation logic
-│   │   ├── report.py
-│   ├── dashboard/            # Streamlit dashboard interface
-│   │   ├── dashboard.py
-│   ├── chatbot/              # Chatbot prompt logic and integration
-│   │   ├── ask.py
-│
-├── data/                     # Static or exported data (optional)
-├── requirements.txt
-└── README.md
-```
 
 ---
 
@@ -50,7 +30,7 @@ vdt-miniproject/
 * **Database**: PostgreSQL 17
 * **Dashboard UI**: [Streamlit](https://streamlit.io/)
 * **Charting**: [Plotly](https://plotly.com/python/)
-* **Chatbot**: [OpenAI GPT-4](https://platform.openai.com/) (optional)
+* **Chatbot**: [Gemini](https://platform.openai.com/) (optional)
 
 ---
 
