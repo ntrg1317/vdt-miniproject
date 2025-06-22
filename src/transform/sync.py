@@ -1,20 +1,17 @@
 import logging, json, os
 from datetime import datetime
 
-import psycopg2
+import pandas as pd
 from kafka import KafkaConsumer
+from sqlalchemy import create_engine
+from config.settings import settings
+from src.service.chart import ChartService
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-POSTGRES_TARGET_HOST=os.getenv('POSTGRES_TARGET_HOST')
-POSTGRES_TARGET_PORT=os.getenv('POSTGRES_TARGET_PORT')
-POSTGRES_TARGET_USER=os.getenv('POSTGRES_TARGET_USER')
-POSTGRES_TARGET_PASSWORD=os.getenv('POSTGRES_TARGET_PASSWORD')
-POSTGRES_TARGET_DB=os.getenv('POSTGRES_TARGET_DB')
 
 class Syncer:
     def __init__(self):
@@ -26,30 +23,19 @@ class Syncer:
             'value_deserializer': lambda value: json.loads(value.decode('utf-8')),
         }
 
-        self.postgres_target_config = {
-            'host': 'localhost',
-            'port': '5433',
-            'user': 'debezium',
-            'password': 'debezium',
-            'database': 'debezium'
-        }
-
         self.consumer = None
-        self.pg_target_conn = None
+        self.engine = None
 
     def connect_kafka(self):
-        topic = "sourcepg.vdt.users"
         try:
-            self.consumer = KafkaConsumer(topic, **self.kafka_config)
-            logger.info(f'Connected to Kafka Topic: {topic}')
+            self.consumer = KafkaConsumer(**self.kafka_config)
+            self.consumer.subscribe(pattern='^sourcepg\..*')
         except Exception as e:
-            logger.error(f'Failed to connect to Kafka Topic: {topic}: {e}')
+            logger.error(f'Failed to connect to Kafka: {e}')
 
     def connect_postgres(self):
         try:
-            self.pg_target_conn = psycopg2.connect(**self.postgres_target_config)
-            self.pg_target_conn.autocommit = True
-            logger.info("Connected to PostgreSQL")
+            self.engine = create_engine(settings.target_database_url)
         except Exception as e:
             logger.error(f'Failed to connect to Postgres Target: {e}')
 
@@ -74,58 +60,71 @@ class Syncer:
 
         logger.info(f'Processing change event: {operation} {table_name}')
         if operation == 'c' or operation == 'u':
-            self.handle_insert_or_update(table_name, payload.get('after'))
-        elif operation == 'd':
-            self.handle_delete(table_name, payload.get('before'))
-        elif operation == 'r':
-            self.handle_insert_or_update(table_name, payload.get('after'))
+            self.handle_update(payload.get('after'))
+        # elif operation == 'd':
+        #     self.handle_delete(table_name, payload.get('before'))
+        # elif operation == 'r':
+        #     self.handle_insert_or_update(table_name, payload.get('after'))
 
     def handle_insert_or_update(self, table_name, data):
         if not data:
             return
 
-        cursor = self.pg_target_conn.cursor()
-        target_table = f"vdt_rep.{table_name}"
+        # conn = self.engine.connect()
+        # target_table = f"catalog.{table_name}"
+        #
+        # columns = list(data.keys())
+        # values = list(data.values())
+        #
+        # insert_query = f"""
+        #     INSERT INTO {target_table} ({', '.join(columns)})
+        #     VALUES ({', '.join(['%s'] * len(columns))})
+        #     ON CONFLICT (id) DO UPDATE SET
+        #     {','.join([f"{col} = EXCLUDED.{col}" for col in columns if col != 'id'])}
+        # """
+        #
+        # logger.info(f"Insert/Update into {target_table}: {data}")
 
-        first_name = data.pop("first_name", "")
-        last_name = data.pop("last_name", "")
-        full_name = first_name + ' ' + last_name
-
-        data['full_name'] = full_name
-        data['sync_at'] = datetime.now()
-        data['created_at'] = datetime.fromtimestamp(data['created_at'] / 1000000)
-        data['updated_at'] = datetime.fromtimestamp(data['updated_at'] / 1000000)
-
-        columns = list(data.keys())
-        values = list(data.values())
-
-        insert_query = f"""
-            INSERT INTO {target_table} ({', '.join(columns)})
-            VALUES ({', '.join(['%s'] * len(columns))})
-            ON CONFLICT (id) DO UPDATE SET
-            {','.join([f"{col} = EXCLUDED.{col}" for col in columns if col != 'id'])}
-        """
-
-        cursor.execute(insert_query, values)
-        logger.info(f"Insert/Update into {target_table}: {data}")
-
-    def handle_delete(self, table_name, data):
+    def handle_update(self, data):
         if not data:
             return
+        engine = self.engine
 
-        cursor = self.pg_target_conn.cursor()
-        target_table = f"vdt_rep.{table_name}"
+        row_id = data['hash_id']
 
-        delete_query = f"""
-        DELETE FROM {target_table} WHERE id = %s
-        """
+        chart = ChartService(engine)
+        chart_data = chart.get_data_row_id(row_id)
+        chart_type = chart_data['type']
 
-        cursor.execute(delete_query, (data['id'],))
-        logger.info(f"Successfully delete from {target_table}: {data}")
+        if chart_type == 'dial':
+            title = chart_data['title']
+            config = {
+                'value_column': data['tt5'],
+                'threshold_column': data['tt4'],
+            }
+            filters = chart_data.get('filters') or {}
+            single_row_data = pd.DataFrame([chart_data])
+            res = chart.create_chart(single_row_data, 'dial', title, config, filters)
+            chart.save_chart(chart_data['dashboard_id'], row_id, data["ind_name"], title,
+                                     'dial', res['json_data'], res['config'], res['filters'])
 
+    # def handle_delete(self, table_name, data):
+    #     if not data:
+    #         return
+    #
+    #     cursor = self.pg_target_conn.cursor()
+    #     target_table = f"vdt_rep.{table_name}"
+    #
+    #     delete_query = f"""
+    #     DELETE FROM {target_table} WHERE id = %s
+    #     """
+    #
+    #     cursor.execute(delete_query, (data['id'],))
+    #     logger.info(f"Successfully delete from {target_table}: {data}")
+    #
     def cleanup(self):
-        if self.pg_target_conn:
-            self.pg_target_conn.close()
+        if self.engine:
+            self.engine.dispose()
         if self.consumer:
             self.consumer.close()
 

@@ -62,7 +62,7 @@ def insert_dashboards(df_dash: pd.DataFrame):
 
 def chart_query(ind_code: str):
     return f"""
-        SELECT report_id, report_name, bc.prd_id, period_name, org_name, ind_name, ind_code, ind_unit, tt4, tt5
+        SELECT report_id, report_name, bc.prd_id, period_name, org_name, hash_id, ind_name, ind_code, ind_unit, tt4, tt5
         FROM public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 bc
         JOIN public.sys_organization o ON bc.org_id = o.id
         JOIN public.rp_input_grant i ON bc.rp_input_grant_id = i.id
@@ -71,16 +71,35 @@ def chart_query(ind_code: str):
         WHERE ind_code = '{ind_code}';
     """
 
+def add_filter():
+    target_conn = target_engine.connect()
+
+    add_filter = """
+    ALTER TABLE catalog.dashboards
+    ADD COLUMN IF NOT EXISTS filters JSONB;
+    """
+    target_conn.execute(text(add_filter))
+    target_conn.commit()
+
 def create_chi_tieu_thang_charts():
     source_conn = engine.connect()
     target_conn = target_engine.connect()
 
     dash_id = settings.CHI_TIEU_THANG
+
+    update_filter = """
+        UPDATE catalog.dashboards
+        SET filters = jsonb_build_object('fields', :field)
+        WHERE id = :id
+        """
+    target_conn.execute(text(update_filter), {'field': 'prd_id', 'id': dash_id})
+    target_conn.commit()
+
     get_table_name = f"""
-    SELECT name, filters
-    FROM catalog.dashboards
-    WHERE id = {dash_id}
-    """
+        SELECT name, filters
+        FROM catalog.dashboards
+        WHERE id = {dash_id}
+        """
 
     dashboard_info = pd.read_sql(text(get_table_name), target_conn).iloc[0]
     table_name = dashboard_info['name']
@@ -121,7 +140,7 @@ def create_chi_tieu_thang_charts():
                     }
                     single_row_data = pd.DataFrame([row])
                     res = chart_service.create_chart(single_row_data, 'dial', title, config, filters)
-                    chart_service.save_chart(dash_id, row["ind_name"], row["org_name"],
+                    chart_service.save_chart(dash_id, row['hash_id'], row["ind_name"], row["org_name"],
                                              'dial', res['json_data'], res['config'], res['filters'])
 
         elif ind_code == 'Bhxh3':
@@ -130,6 +149,7 @@ def create_chi_tieu_thang_charts():
             for filter_value in list_filter_value:
                 filtered_data = data[data[filter_col] == filter_value]
                 title = filtered_data['ind_name'].iloc[0]
+                row_id = filtered_data['hash_id'].iloc[0]
                 config = {
                     'orientation': 'h',
                     'x_column': 'org_name',
@@ -142,7 +162,7 @@ def create_chi_tieu_thang_charts():
                     filter_col: filter_value,
                 }
                 res = chart_service.create_chart(filtered_data, 'bar', title, config, filters)
-                chart_service.save_chart(dash_id, title, title,'bar', res['json_data'], res['config'], res['filters'])
+                chart_service.save_chart(dash_id, row_id , title, title,'bar', res['json_data'], res['config'], res['filters'])
 
         else:
             query = chart_query(ind_code)
@@ -157,6 +177,7 @@ def create_chi_tieu_thang_charts():
                     value_name='Value'
                 )
                 title = filtered_data['ind_name'].iloc[0]
+                row_id = filtered_data['hash_id'].iloc[0]
                 config = {
                     'orientation': 'v',
                     'x_column': 'org_name',
@@ -171,11 +192,12 @@ def create_chi_tieu_thang_charts():
                     filter_col: filter_value,
                 }
                 res = chart_service.create_chart(data_melt, 'bar', title, config, filters)
-                chart_service.save_chart(dash_id, title, title, 'bar', res['json_data'], res['config'], res['filters'])
+                chart_service.save_chart(dash_id, row_id, title, title, 'bar', res['json_data'], res['config'], res['filters'])
 
 
 if __name__ == "__main__":
     rp_tables = list_rp()
     df_rp = dashboard_info(rp_tables)
     insert_dashboards(df_rp)
+    add_filter()
     create_chi_tieu_thang_charts()

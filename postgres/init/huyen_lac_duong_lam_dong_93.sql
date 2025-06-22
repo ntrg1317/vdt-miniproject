@@ -20,6 +20,8 @@ SET row_security = off;
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
 --
+CREATE PUBLICATION debezium_pub FOR ALL TABLES;
+
 
 -- *not* creating schema, since initdb creates it
 
@@ -84,6 +86,7 @@ ALTER TABLE public.bang_hong_test OWNER TO postgres;
 
 
     ALTER TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 OWNER TO postgres;
+    ALTER TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753 ADD CONSTRAINT bao_cao_7753_pkey PRIMARY KEY (hash_id);
 
     --
     -- Name: bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759; Type: TABLE; Schema: public; Owner: postgres
@@ -112,6 +115,7 @@ ALTER TABLE public.bang_hong_test OWNER TO postgres;
 
 
     ALTER TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 OWNER TO postgres;
+    ALTER TABLE public.bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759 ADD CONSTRAINT bao_cao_7759_pkey PRIMARY KEY (hash_id);
 
     --
     -- Name: bao_cao_thang_ktxh_huyen_lac_duong_4702; Type: TABLE; Schema: public; Owner: postgres
@@ -140,6 +144,7 @@ ALTER TABLE public.bang_hong_test OWNER TO postgres;
 
 
     ALTER TABLE public.bao_cao_thang_ktxh_huyen_lac_duong_4702 OWNER TO postgres;
+    ALTER TABLE public.bao_cao_thang_ktxh_huyen_lac_duong_4702 ADD CONSTRAINT bao_cao_4702_pkey PRIMARY KEY (hash_id);
 
     --
     -- Name: danhsach_hongheo_lacduong; Type: TABLE; Schema: public; Owner: postgres

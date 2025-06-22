@@ -1,3 +1,4 @@
+import json
 import os
 from dotenv import load_dotenv
 
@@ -45,6 +46,15 @@ class Settings:
     @property
     def target_database_url(self):
         return f"postgresql://{self.DBT_USER}:{self.DBT_PASSWORD}@{self.DBT_HOST}:{self.DBT_PORT}/{self.DBT_NAME}"
+
+    def kafka_config(self):
+        return {
+            'bootstrap_servers': ['localhost:9092'],
+            'auto_offset_reset': 'earliest',
+            'enable_auto_commit': True,
+            'group_id': 'sync-pg-tables',
+            'value_deserializer': lambda value: json.loads(value.decode('utf-8')),
+        }
 
 
 settings = Settings()

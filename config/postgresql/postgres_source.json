@@ -9,13 +9,13 @@
     "database.password": "postgres",
     "database.dbname" : "postgres",
     "database.server.name": "sourcepg",
-    "table.include.list": "vdt.users",
-    "schema.include.list": "vdt",
+    "schema.include.list": "public",
+    "table.include.list": "bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_7753,bao_cao_ktxh_huyen_lac_duong_chi_tieu_thang_phong_ban_7759,bao_cao_thang_ktxh_huyen_lac_duong_4702",
     "plugin.name": "pgoutput",
     "slot.name": "debezium_slot",
     "publication.name": "debezium_pub",
     "database.history.kafka.bootstrap.servers": "kafka:9092",
-    "database.history.kafka.topic": "schema-changes.users",
+    "database.history.kafka.topic": "schema-changes.source",
     "topic.prefix": "sourcepg"
   }
 }

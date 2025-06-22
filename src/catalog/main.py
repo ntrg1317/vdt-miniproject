@@ -2,7 +2,6 @@ from datetime import datetime
 
 from src.catalog.catalog_fields_info import *
 from src.catalog.catalog_tables_info import *
-from src.utils.pg_conn import PostgresConn
 
 
 def collect_metadata():

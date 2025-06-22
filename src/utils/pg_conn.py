@@ -2,6 +2,9 @@ import os
 
 import psycopg2
 from psycopg2 import sql, OperationalError
+from dotenv import load_dotenv
+
+load_dotenv()
 
 SRC_HOST = os.getenv('POSTGRES_SOURCE_HOST')
 SRC_PORT = os.getenv('POSTGRES_SOURCE_PORT')

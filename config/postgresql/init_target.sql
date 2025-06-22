@@ -305,6 +305,7 @@ COMMENT ON COLUMN catalog.dashboards.created_at IS 'Thời điểm tạo dashboa
 CREATE TABLE catalog.charts (
     id SERIAL PRIMARY KEY,
     dashboard_id INTEGER NOT NULL REFERENCES catalog.dashboards(id) ON DELETE CASCADE,
+    row_id TEXT,
     name TEXT NOT NULL,      -- Tên biểu đồ
     title TEXT,              -- Tiêu đề hiển thị
     type TEXT NOT NULL,      -- Loại biểu đồ: bar, line, pie, ...
@@ -313,6 +314,9 @@ CREATE TABLE catalog.charts (
     json_data JSONB,         -- Dữ liệu biểu đồ (Plotly JSON)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE catalog.charts
+ADD CONSTRAINT charts_dashboard_row_unique UNIQUE (dashboard_id, row_id);
 
 -- Comment cho bảng và các cột
 COMMENT ON TABLE catalog.charts IS 'Danh sách biểu đồ thuộc về các dashboard';

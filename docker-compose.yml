@@ -1,89 +1,100 @@
-version: '3.8'
-services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-    ports:
-      - "2181:2181"
+  version: '3.8'
+  services:
+    zookeeper:
+      image: confluentinc/cp-zookeeper:7.4.0
+      container_name: zookeeper
+      environment:
+        ZOOKEEPER_CLIENT_PORT: 2181
+      ports:
+        - "2181:2181"
 
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT_HOST://0.0.0.0:9092,PLAINTEXT://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS:  PLAINTEXT_HOST://localhost:9092,PLAINTEXT://kafka:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    ports:
-      - "9092:9092"
+    kafka:
+      image: confluentinc/cp-kafka:7.4.0
+      container_name: kafka
+      depends_on:
+        - zookeeper
+      environment:
+        KAFKA_BROKER_ID: 1
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        KAFKA_LISTENERS: PLAINTEXT_HOST://0.0.0.0:9092,PLAINTEXT://0.0.0.0:9093
+        KAFKA_ADVERTISED_LISTENERS:  PLAINTEXT_HOST://localhost:9092,PLAINTEXT://kafka:9093
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT:PLAINTEXT
+        KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      ports:
+        - "9092:9092"
 
-  postgres-source:
-    image: debezium/postgres:17
-    container_name: postgres-source
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    volumes:
-      - ./config/postgresql:/postgres/config
-      - ./postgres/init:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
+    postgres-source:
+      image: debezium/postgres:17
+      container_name: postgres-source
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: postgres
+      volumes:
+        - ./config/postgresql:/postgres/config
+        - ./postgres/init:/docker-entrypoint-initdb.d
+      ports:
+        - "5432:5432"
 
-  postgres-target:
-    image: debezium/postgres:17
-    container_name: postgres-target
-    environment:
-      POSTGRES_USER: debezium
-      POSTGRES_PASSWORD: debezium
-      POSTGRES_DB: debezium
-    volumes:
-      - ./config:/postgres/config
-      - ./config/postgresql/init-target.sql:/docker-entrypoint-initdb.d/init-target.sql
-    ports:
-      - "5433:5432"
+    postgres-target:
+      image: debezium/postgres:17
+      container_name: postgres-target
+      environment:
+        POSTGRES_USER: debezium
+        POSTGRES_PASSWORD: debezium
+        POSTGRES_DB: debezium
+      volumes:
+        - ./config:/postgres/config
+        - ./config/postgresql/init_target.sql:/docker-entrypoint-initdb.d/init_target.sql
+        - ./config/postgresql/add_business_term.sql:/docker-entrypoint-initdb.d/add_business_term.sql
+      ports:
+        - "5433:5432"
 
-  debezium-connect:
-    image: debezium/connect:2.5
-    container_name: debezium-connect
-    depends_on:
-      - kafka
-      - postgres-source
-    environment:
-      BOOTSTRAP_SERVERS: kafka:9093
-      GROUP_ID: "1"
-      CONFIG_STORAGE_TOPIC: debezium_connect_configs
-      OFFSET_STORAGE_TOPIC: debezium_connect_offsets
-      STATUS_STORAGE_TOPIC: debezium_connect_status
-    ports:
-      - "8083:8083"
+    debezium-connect:
+      image: debezium/connect:2.5
+      container_name: debezium-connect
+      depends_on:
+        - kafka
+        - postgres-source
+      environment:
+        BOOTSTRAP_SERVERS: kafka:9093
+        GROUP_ID: "1"
+        CONFIG_STORAGE_TOPIC: debezium_connect_configs
+        OFFSET_STORAGE_TOPIC: debezium_connect_offsets
+        STATUS_STORAGE_TOPIC: debezium_connect_status
+      ports:
+        - "8083:8083"
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    depends_on:
-      - kafka
-    environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
-    ports:
-      - "8080:8080"
+    kafka-ui:
+      image: provectuslabs/kafka-ui:latest
+      container_name: kafka-ui
+      depends_on:
+        - kafka
+      environment:
+        KAFKA_CLUSTERS_0_NAME: local
+        KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+      ports:
+        - "8080:8080"
 
-  schema-registry:
-    image: confluentinc/cp-schema-registry:7.4.0
-    container_name: schema-registry
-    depends_on:
-      - kafka
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9093
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    schema-registry:
+      image: confluentinc/cp-schema-registry:7.4.0
+      container_name: schema-registry
+      depends_on:
+        - kafka
+      ports:
+        - "8081:8081"
+      environment:
+        SCHEMA_REGISTRY_HOST_NAME: schema-registry
+        SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9093
+        SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
+    init-connector:
+      image: curlimages/curl:latest
+      container_name: init-connector
+      depends_on:
+        - debezium-connect
+      volumes:
+        - ./config/postgresql:/postgres/config
+        - ./config/init/init_connector.sh:/init.sh
+      entrypoint: ["sh", "/init.sh"]

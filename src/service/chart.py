@@ -158,11 +158,12 @@ class ChartService:
 
         return fig
 
-    def save_chart(self, dashboard_id:int, name: str, title: str, chart_type: str, json_data: str,
+    def save_chart(self, dashboard_id:int, row_id:str, name: str, title: str, chart_type: str, json_data: str,
                      config: Dict[str, Any], filters: Optional[Dict[str, Any]] = None):
 
         stmt = insert(self.charts).values(
             dashboard_id=dashboard_id,
+            row_id=row_id,
             name=name,
             title=title,
             type=chart_type,
@@ -171,9 +172,10 @@ class ChartService:
             filters=filters or {},
             created_at=datetime.now()
         ).on_conflict_do_update(
-            index_elements=['id'],  # cột bị xung đột
+            index_elements=['dashboard_id', 'row_id'],  # cột bị xung đột
             set_={
                 'dashboard_id': dashboard_id,
+                'row_id': row_id,
                 'name': name,
                 'title': title,
                 'type': chart_type,
@@ -196,3 +198,13 @@ class ChartService:
         with self.engine.connect() as conn:
             conn.execute(text(f"TRUNCATE TABLE {self.charts} RESTART IDENTITY"))
             conn.commit()
+
+    def get_data_row_id(self, row_id: str):
+        query = text("""
+                     SELECT *
+                     FROM catalog.charts
+                     WHERE row_id = :row_id
+                     """)
+        with self.engine.connect() as conn:
+            result = conn.execute(query, {"row_id": row_id}).mappings().fetchone()
+            return dict(result) if result else None
